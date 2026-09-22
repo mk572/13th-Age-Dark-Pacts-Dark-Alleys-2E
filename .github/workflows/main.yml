@@ -2,6 +2,14 @@ name: 13th Age Dark Pacts & Dark Alleys (2E) CI
 
 on: [push]
 
+# This repo's default GITHUB_TOKEN is read-only (new-repo default, unlike
+# dark-alleys-compendium's older repo-level setting) — without this,
+# ncipollo/release-action fails with "403: Resource not accessible by
+# integration" trying to create a release. Declared explicitly here so
+# it works regardless of the repo's own Settings -> Actions default.
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
