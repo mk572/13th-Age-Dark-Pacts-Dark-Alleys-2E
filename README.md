@@ -34,8 +34,21 @@ build on, not a finished conversion.
 
 ## Install
 
-```
-https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E/releases/download/latest/module.json
-```
+Requires the `archmage` game system (v1.40.1+) in a World running its
+2e ruleset.
 
-(No release has been cut yet — this URL won't resolve until one exists.)
+1. In Foundry's **Setup** screen, go to **Add-on Modules → Install
+   Module**.
+2. Paste this manifest URL and click **Install**:
+   ```
+   https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E/releases/download/latest/module.json
+   ```
+3. Launch your World, then **Game Settings → Manage Modules**, check
+   **"13th Age: Dark Pacts & Dark Alleys (2E)"**, and **Save Module
+   Settings**.
+
+On The Forge, use **Setup → Add-on Modules → Install Module** the same
+way, or Table Tools → **Summon Import Wizard** with the
+`13th-Age-Dark-Pacts-Dark-Alleys-2E.zip` asset from the [latest
+release](https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E/releases/tag/latest)
+if you'd rather upload a zip directly.
