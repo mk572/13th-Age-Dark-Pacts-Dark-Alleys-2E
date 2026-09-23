@@ -106,7 +106,7 @@ Hooks.on("ready", function () {
   CONFIG.ARCHMAGE.keyModifiers["savage"]["rogue"] = ["str","dex"];
   CONFIG.ARCHMAGE.keyModifiers["savage"]["sorcerer"] = ["str","cha"];
   CONFIG.ARCHMAGE.keyModifiers["savage"]["wizard"] = ["int","str"];
-  CONFIG.ARCHMAGE.classResources["savage"] = [["Frenzydice","quickreset"],["Frenzydiesize","none"]];
+  CONFIG.ARCHMAGE.classResources["savage"] = [["Frenzy","quickreset"],["Frenzydiesize","none"]];
   console.log("Savage (13th Age) class loaded successfully.");
 
   console.log("Swordmage (13th Age) class injecting data into the system...");
