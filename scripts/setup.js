@@ -9,6 +9,14 @@
 // triangle, store once" convention — simpler and harmless, since the
 // registration order here can't be assumed to match core's.
 Hooks.on("ready", function () {
+  // Without this, archmage's Import Powers dialog never shows this
+  // module's own class journal (level table, etc.) for ANY of the
+  // classes below — see this generator's own comment for why.
+  CONFIG.ARCHMAGE.classPacks ??= [];
+  if (!CONFIG.ARCHMAGE.classPacks.includes("classes-2e")) {
+    CONFIG.ARCHMAGE.classPacks.push("classes-2e");
+  }
+
   console.log("Abomination (13th Age) class injecting data into the system...");
   CONFIG.ARCHMAGE.classList["abomination"] = "Abomination";
   CONFIG.ARCHMAGE.classes["abomination"] = {"hp":8,"ac_lgt":13,"ac_hvy":15,"ac_hvy_pen":-5,"shld_pen":-2,"pd":11,"md":10,"rec_die":10,"wpn_1h":8,"wpn_2h":10,"wpn_2h_pen":-1,"wpn_rngd":6,"skilled_warrior":true};
