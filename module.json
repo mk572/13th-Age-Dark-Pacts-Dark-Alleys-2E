@@ -2,7 +2,7 @@
   "id": "13th-age-dark-pacts-dark-alleys-2e",
   "title": "13th Age: Dark Pacts & Dark Alleys (2E)",
   "description": "Compendium packs generated from https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E — the 2e port of the Dark Pacts & Ancient Secrets / Dark Alleys & Twisted Path rules content, kept in its own module/repo since 2e rules are still actively changing (gameplay-affecting version bumps, not just fixes), unlike the stable 1e module. Regenerated from data/2e/classes/*.yaml via `npm run export:all -- --edition 2e` + this script; do not hand-edit.",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
