@@ -83,6 +83,23 @@
       "type": "JournalEntry"
     }
   ],
+  "packFolders": [
+    {
+      "name": "Dark Pacts / Dark Alleys",
+      "sorting": "a",
+      "packs": [
+        "abomination-2e",
+        "fateweaver-2e",
+        "masque-2e",
+        "psion-2e",
+        "psion-2e-summons",
+        "savage-2e",
+        "swordmage-2e",
+        "warlock-2e",
+        "classes-2e"
+      ]
+    }
+  ],
   "manifest": "https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E/releases/download/latest/module.json",
   "download": "https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E/releases/download/latest/13th-Age-Dark-Pacts-Dark-Alleys-2E.zip",
   "scripts": [
