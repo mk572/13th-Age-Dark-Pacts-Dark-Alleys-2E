@@ -60,6 +60,11 @@ Hooks.on("ready", function () {
   CONFIG.ARCHMAGE.keyModifiers["fateweaver"]["wizard"] = ["int","wis"];
   console.log("Fateweaver (13th Age) class loaded successfully.");
 
+  console.log("Masque (13th Age) class injecting data into the system...");
+  CONFIG.ARCHMAGE.classList["masque"] = "Masque";
+  CONFIG.ARCHMAGE.classes["masque"] = {"hp":7,"ac_lgt":13,"ac_hvy":14,"ac_hvy_pen":-1,"shld_pen":0,"pd":10,"md":10,"rec_die":8,"wpn_1h":8,"wpn_2h":10,"wpn_2h_pen":0,"wpn_rngd":8,"skilled_warrior":true};
+  console.log("Masque (13th Age) class loaded successfully.");
+
   console.log("Psion (13th Age) class injecting data into the system...");
   CONFIG.ARCHMAGE.classList["psion"] = "Psion";
   CONFIG.ARCHMAGE.classes["psion"] = {"hp":6,"ac_lgt":10,"ac_hvy":11,"ac_hvy_pen":-2,"shld_pen":0,"pd":9,"md":9,"rec_die":6,"wpn_1h":6,"wpn_2h":8,"wpn_2h_pen":0,"wpn_rngd":6,"skilled_warrior":false};
