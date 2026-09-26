@@ -599,7 +599,8 @@ const DA_DATA = {
     "powers": {},
     "companionTraits": []
   },
-  "races": []
+  "races": [],
+  "flagScope": "13a-rules-db"
 };
 
 // ---- vtt-scripts/register-classes.js ----
@@ -755,7 +756,7 @@ const companionTraitSets = [];
 
 Hooks.once("ready", async function () {
   const extras = DA_DATA.importExtras;
-  if (Object.keys(extras.powers).length) await wrapImportPowers(extras.powers);
+  await wrapImportPowers(extras.powers);
   for (const { actorPack, traitPack } of extras.companionTraits) {
     const actors = game.packs.get(actorPack);
     const traits = findPack(traitPack);
@@ -806,9 +807,23 @@ async function wrapImportPowers(powers) {
         content[cls].content = docs.concat(content[cls].content);
       }
     }
+    hideGrantedChildren(content);
     return content;
   };
-  console.log(`Dark Alleys: Import Powers extras for ${Object.keys(powers).join(", ")}.`);
+  if (Object.keys(powers).length) console.log(`Dark Alleys: Import Powers extras for ${Object.keys(powers).join(", ")}.`);
+}
+
+// Child entries (docs/DATA-FORMAT.md "granted"): a child the parent adds by
+// itself is hidden from the dialog, but only while its parent is listed in
+// the same class group, so a broken link can never make a power unreachable.
+function hideGrantedChildren(content) {
+  const scope = DA_DATA.flagScope;
+  for (const group of Object.values(content ?? {})) {
+    if (!Array.isArray(group?.content)) continue;
+    const docId = (d) => d.id ?? d._id;
+    const listedGrants = new Set(group.content.flatMap((d) => (d.flags?.[scope]?.grants ?? []).map((g) => g.id)));
+    group.content = group.content.filter((d) => !(d.flags?.[scope]?.autoGranted && listedGrants.has(docId(d))));
+  }
 }
 
 // A dragged or imported compendium actor records `_stats.compendiumSource`
@@ -823,5 +838,93 @@ Hooks.on("preCreateActor", function (actor, data) {
     const add = traits.filter((t) => !have.has(t.name));
     if (add.length) actor.updateSource({ items: [...actor._source.items, ...add] });
   }
+});
+
+// ---- vtt-scripts/granted-items.js ----
+// Child entries (docs/DATA-FORMAT.md "granted"): adding a parent Item to a
+// character also adds the children it lists, and removing the parent removes
+// the children it created. Runs on every way an Item reaches an actor (Import
+// Powers, drag from a compendium, "add item"), since it listens to
+// createItem/deleteItem. Import Powers hiding the children is import-extras.js.
+//
+// Reads DA_DATA.flagScope (the key under which the exporter writes Item flags):
+//   parent Item:  flags[scope].grants = [{ pack: "<this module's pack name>", id: "<Item _id in that pack>" }
+//                                         | { packId: "<full pack id, any package>", name: "<Item name>" }]
+//   granted copy: flags[scope].grantedBy = the parent's Item id on the actor,
+//                 flags[scope].grantedByName = the parent's name at grant time
+// A copy is tied to the one parent that created it: two parents granting the
+// same power give two copies, and each goes with its own parent. Flags are read
+// as plain properties, not getFlag(), which rejects scopes that aren't packages.
+
+// The child's own text field that gets the "Created by <parent>" line.
+const CREATED_BY_FIELD = "special";
+
+const grantScope = DA_DATA.flagScope;
+
+// A granted child that itself lists grants (item 1 grants item 2, item 2 grants
+// item 3) is flattened: everything is created once and tied to the TOP parent
+// (item 1), so removing item 1 removes all of it. The data is meant to list every
+// child on the top parent; this is the fallback when it doesn't. Copies created
+// here don't run this hook again (daGranted), and a `seen` set stops loops.
+function grantChildData(child, parent) {
+  const data = child.toObject();
+  delete data._id;
+  data.flags = foundry.utils.mergeObject(data.flags ?? {}, {
+    [grantScope]: { grantedBy: parent.id, grantedByName: parent.name },
+  });
+  const field = (data.system[CREATED_BY_FIELD] ??= { value: "" });
+  const line = `<p><em>Created by ${foundry.utils.escapeHTML(parent.name)}</em></p>`;
+  field.value = field.value ? `${line}${field.value}` : line;
+  return data;
+}
+
+async function collectGrants(refs, seen, found, missing, viaName) {
+  for (const { pack: packName, id, packId, name } of refs) {
+    // Own child: this module's pack + Item id. External: any package's full pack id + Item name.
+    const pack = packId
+      ? game.packs.get(packId)
+      : game.packs.find((p) => p.metadata.packageType === "module" && p.metadata.name === packName);
+    const childId = id ?? (await pack?.getIndex())?.find((e) => e.name === name)?._id;
+    const child = childId ? await pack.getDocument(childId) : null;
+    if (!child) {
+      missing.push(packId ? `${packId}/${name}` : `${packName}/${id}`);
+      continue;
+    }
+    const key = child.uuid ?? child.id;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    found.push(child);
+    const nested = child.flags?.[grantScope]?.grants;
+    if (nested?.length) {
+      console.info(`Dark Alleys: ${child.name} (granted via ${viaName}) grants more; those are tied to the top parent too.`);
+      await collectGrants(nested, seen, found, missing, viaName);
+    }
+  }
+}
+
+Hooks.on("createItem", async function (item, options, userId) {
+  if (userId !== game.user.id || options?.daGranted) return;
+  const actor = item.parent;
+  if (actor?.documentName !== "Actor" || actor.type !== "character") return;
+  const grants = item.flags?.[grantScope]?.grants;
+  if (!grants?.length) return;
+
+  const found = [];
+  const missing = [];
+  await collectGrants(grants, new Set(), found, missing, item.name);
+  const children = found.map((child) => grantChildData(child, item));
+  if (missing.length) {
+    console.warn(`Dark Alleys: ${item.name} could not add ${missing.length} granted item(s): ${missing.join(", ")}`);
+    ui.notifications.warn(`${item.name}: ${missing.length} granted power(s) could not be added.`);
+  }
+  if (children.length) await actor.createEmbeddedDocuments("Item", children, { daGranted: true });
+});
+
+Hooks.on("deleteItem", async function (item, options, userId) {
+  if (userId !== game.user.id) return;
+  const actor = item.parent;
+  if (actor?.documentName !== "Actor" || !item.flags?.[grantScope]?.grants?.length) return;
+  const ids = actor.items.filter((i) => i.flags?.[grantScope]?.grantedBy === item.id).map((i) => i.id);
+  if (ids.length) await actor.deleteEmbeddedDocuments("Item", ids);
 });
 })();
