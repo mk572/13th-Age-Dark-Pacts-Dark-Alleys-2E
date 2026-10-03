@@ -27,6 +27,13 @@
       "type": "Item"
     },
     {
+      "name": "barbarian-2e",
+      "label": "Barbarian",
+      "system": "archmage",
+      "path": "packs/barbarian-2e",
+      "type": "Item"
+    },
+    {
       "name": "fateweaver-2e",
       "label": "Fateweaver",
       "system": "archmage",
@@ -96,6 +103,7 @@
       "sorting": "a",
       "packs": [
         "abomination-2e",
+        "barbarian-2e",
         "fateweaver-2e",
         "masque-2e",
         "psion-2e",
