@@ -2,7 +2,7 @@
   "id": "13th-age-dark-pacts-dark-alleys-2e",
   "title": "13th Age: Dark Pacts & Dark Alleys (2E)",
   "description": "Compendium packs generated from https://github.com/mk572/13th-Age-Dark-Pacts-Dark-Alleys-2E — the 2e port of the Dark Pacts & Ancient Secrets / Dark Alleys & Twisted Path rules content, kept in its own module/repo since 2e rules are still actively changing (gameplay-affecting version bumps, not just fixes), unlike the stable 1e module. Regenerated from data/2e/classes/*.yaml via `npm run export:all -- --edition 2e` + this script; do not hand-edit.",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
@@ -97,6 +97,41 @@
       "system": "archmage",
       "path": "packs/classes-2e",
       "type": "JournalEntry"
+    },
+    {
+      "name": "fighter-2e",
+      "label": "Fighter",
+      "system": "archmage",
+      "path": "packs/fighter-2e",
+      "type": "Item"
+    },
+    {
+      "name": "paladin-2e",
+      "label": "Paladin",
+      "system": "archmage",
+      "path": "packs/paladin-2e",
+      "type": "Item"
+    },
+    {
+      "name": "wizard-2e",
+      "label": "Wizard",
+      "system": "archmage",
+      "path": "packs/wizard-2e",
+      "type": "Item"
+    },
+    {
+      "name": "wizard-2e-rolltables",
+      "label": "Wizard (Roll Tables)",
+      "system": "archmage",
+      "path": "packs/wizard-2e-rolltables",
+      "type": "RollTable"
+    },
+    {
+      "name": "wizard-2e-summons",
+      "label": "Wizard (Summons)",
+      "system": "archmage",
+      "path": "packs/wizard-2e-summons",
+      "type": "Actor"
     }
   ],
   "packFolders": [
@@ -114,7 +149,12 @@
         "swordmage-2e",
         "swordmage-2e-rolltables",
         "warlock-2e",
-        "classes-2e"
+        "classes-2e",
+        "fighter-2e",
+        "paladin-2e",
+        "wizard-2e",
+        "wizard-2e-rolltables",
+        "wizard-2e-summons"
       ]
     }
   ],
